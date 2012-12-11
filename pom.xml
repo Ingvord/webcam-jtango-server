@@ -21,18 +21,15 @@
             <groupId>javax</groupId>
             <artifactId>jmf</artifactId>
             <version>2.1.1e</version>
-            <systemPath>${env.JMF_HOME}/lib/jmf.jar</systemPath>
+            <systemPath>${project.basedir}/lib/jmf.jar</systemPath>
             <scope>system</scope>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.6.1</version>
-        </dependency>
-        <dependency>
-            <groupId>hzg.wpn</groupId>
-            <artifactId>TangoAPI</artifactId>
-            <version>1.7</version>
+            <groupId>org.tango</groupId>
+            <artifactId>JTangoServer</artifactId>
+            <version>0.0.29</version>
+            <systemPath>${project.basedir}/lib/JTangoServer-0.0.29-all.jar</systemPath>
+            <scope>system</scope>
         </dependency>
     </dependencies>
 
