@@ -16,7 +16,6 @@ public class Engine {
     private final CaptureDeviceInfo di;
     private final MediaLocator ml;
     private final AtomicReference<BufferedImage> lastCapturedImage = new AtomicReference<BufferedImage>(null);
-    private final VideoFormat vf = null;
     private final FrameGrabbingControl fgc;
 
     public Engine(String captureDevice /*= "vfw:Microsoft WDM Image Capture (Win32):0"*/) {
@@ -40,7 +39,6 @@ public class Engine {
 
     public void start(){
         player.start();
-        captureImage();
     }
 
     public void captureImage(){
@@ -58,15 +56,16 @@ public class Engine {
         int width = image.getWidth();
         int[][] result = new int[height][width];
         for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                int rgb = image.getRGB(x,y);
-                result[y][x] = rgb;
-            }
+            image.getRGB(0,y,640,1,result[y],0,0);
         }
         return result;
     }
 
     public void stop(){
+        player.stop();
+    }
+
+    public void shutdown() {
         player.close();
         player.deallocate();
     }
