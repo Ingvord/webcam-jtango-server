@@ -6,7 +6,6 @@
     <dependencySets>
         <dependencySet>
             <outputDirectory>/lib</outputDirectory>
-            <fileMode>0777</fileMode>
         </dependencySet>
     </dependencySets>
     <fileSets>
@@ -18,7 +17,6 @@
         <fileSet>
             <directory>lib</directory>
             <outputDirectory>/lib</outputDirectory>
-            <fileMode>0777</fileMode>
         </fileSet>
         <fileSet>
             <directory>doc</directory>

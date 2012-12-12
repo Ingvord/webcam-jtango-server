@@ -20,6 +20,4 @@ Echo Using WEBCAM_HOME=%WEBCAM_HOME%
 set INSTANCE_NAME=%1
 Echo Using instance name=%INSTANCE_NAME%
 
-Echo "%JRE32_HOME%\bin\java" -Xmx1G -Djava.library.path="%WEBCAM_HOME%\lib\native\win32" -Dfile.encoding=UTF-8 -cp "%WEBCAM_HOME%\lib\WebCamServer-1.0.jar;%WEBCAM_HOME%\lib\JTangoServer-0.0.29-all.jar;%WEBCAM_HOME%\lib\jmf.jar" hzg.wpn.tango.camera.webcam.WebCam %INSTANCE_NAME% -v4
-
 "%JRE32_HOME%\bin\java" -Xmx1G -Djava.library.path="%WEBCAM_HOME%\lib\native\win32" -Dfile.encoding=UTF-8 -cp "%WEBCAM_HOME%\lib\WebCamServer-1.0.jar;%WEBCAM_HOME%\lib\JTangoServer-0.0.29-all.jar;%WEBCAM_HOME%\lib\jmf.jar" hzg.wpn.tango.camera.webcam.WebCam %INSTANCE_NAME% -v4
