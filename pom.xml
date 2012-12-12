@@ -8,7 +8,6 @@
     <artifactId>WebCamServer</artifactId>
     <description>A simple tango server for web cams</description>
     <version>1.0</version>
-    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>

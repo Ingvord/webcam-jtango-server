@@ -47,7 +47,18 @@ public class Engine {
         // Convert it to an image
         BufferToImage btoi = new BufferToImage((VideoFormat)buf.getFormat());
 
-        lastCapturedImage.set((BufferedImage)btoi.createImage(buf));
+        BufferedImage image = (BufferedImage) btoi.createImage(buf);
+        if(image == null){
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return;
+            }
+            captureImage();
+        } else {
+            lastCapturedImage.set(image);
+        }
     }
 
     public int[][] getImage(){
