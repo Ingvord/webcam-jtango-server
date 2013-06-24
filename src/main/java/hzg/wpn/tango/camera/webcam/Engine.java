@@ -1,5 +1,9 @@
 package hzg.wpn.tango.camera.webcam;
 
+import com.google.zxing.*;
+import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
+import com.google.zxing.common.HybridBinarizer;
+
 import javax.media.*;
 import javax.media.control.FrameGrabbingControl;
 import javax.media.format.VideoFormat;
@@ -60,6 +64,20 @@ public class Engine {
             lastCapturedImage.set(image);
         }
     }
+
+    public String decodeBarcode() throws Exception{
+        BufferedImage image;
+        if((image = lastCapturedImage.get()) == null)
+            throw new NullPointerException("No image was captured.");
+
+        LuminanceSource source = new BufferedImageLuminanceSource(image);
+        BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
+        Reader reader = new MultiFormatReader();
+        Result result = reader.decode(bitmap);
+
+        return result.getText();
+    }
+
 
     public int[][] getImage(){
         BufferedImage image = lastCapturedImage.get();
