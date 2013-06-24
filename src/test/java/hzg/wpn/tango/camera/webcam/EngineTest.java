@@ -2,6 +2,7 @@ package hzg.wpn.tango.camera.webcam;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
@@ -25,6 +26,11 @@ public class EngineTest {
         int[][] image = engine.getImage();
 
 
+
+    }
+
+    @Test
+    public void testDecode(){
 
     }
 
