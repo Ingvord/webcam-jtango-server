@@ -5,6 +5,8 @@ import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.GlobalHistogramBinarizer;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.datamatrix.DataMatrixReader;
+import org.libdmtx.DMTXImage;
+import org.libdmtx.DMTXTag;
 
 import javax.imageio.ImageIO;
 import javax.media.*;
@@ -71,7 +73,7 @@ public class Engine {
         }
     }
 
-    public String decodeBarcode() throws Exception{
+    public String[] decodeBarcode() throws Exception{
         BufferedImage image;
         if((image = lastCapturedImage.get()) == null){
             captureImage();
@@ -81,14 +83,20 @@ public class Engine {
 
         image = redrawInGrayScale(image);
         ImageIO.write(image,"jpeg",new File("output-gray.jpeg"));
-        Hashtable<DecodeHintType, Object> hint = new Hashtable<DecodeHintType, Object>();
-        hint.put(DecodeHintType.TRY_HARDER, BarcodeFormat.DATA_MATRIX);
-        LuminanceSource source = new BufferedImageLuminanceSource(image);
-        BinaryBitmap bitmap = new BinaryBitmap(new GlobalHistogramBinarizer(source));
-        Reader reader = new MultiFormatReader();
-        Result result = reader.decode(bitmap,hint);
 
-        return result.getText();
+        DMTXImage lDImg = new DMTXImage(image);
+
+        DMTXTag[] tags = lDImg.getTags(4, Integer.MAX_VALUE);
+        if(tags == null)
+            throw new NullPointerException("No barcodes were found!");
+
+        String[] result = new String[tags.length];
+
+        int i = 0;
+        for(DMTXTag tag : tags){
+            result[i++] = tag.id;
+        }
+        return result;
     }
 
     private BufferedImage redrawInGrayScale(BufferedImage coloredImage){

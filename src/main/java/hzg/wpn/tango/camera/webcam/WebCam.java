@@ -52,7 +52,7 @@ public class WebCam {
     }
 
     @Command
-    public String decodeBarcode() throws Exception{
+    public String[] decodeBarcode() throws Exception{
         return this.engine.decodeBarcode();
     }
 
