@@ -2,13 +2,19 @@ package hzg.wpn.tango.camera.webcam;
 
 import com.google.zxing.*;
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
+import com.google.zxing.common.GlobalHistogramBinarizer;
 import com.google.zxing.common.HybridBinarizer;
+import com.google.zxing.datamatrix.DataMatrixReader;
 
+import javax.imageio.ImageIO;
 import javax.media.*;
 import javax.media.control.FrameGrabbingControl;
 import javax.media.format.VideoFormat;
 import javax.media.util.BufferToImage;
+import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.Hashtable;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -67,17 +73,32 @@ public class Engine {
 
     public String decodeBarcode() throws Exception{
         BufferedImage image;
-        if((image = lastCapturedImage.get()) == null)
-            throw new NullPointerException("No image was captured.");
+        if((image = lastCapturedImage.get()) == null){
+            captureImage();
+            image = lastCapturedImage.get();
+        }
+        ImageIO.write(image,"jpeg",new File("output-color.jpeg"));
 
+        image = redrawInGrayScale(image);
+        ImageIO.write(image,"jpeg",new File("output-gray.jpeg"));
+        Hashtable<DecodeHintType, Object> hint = new Hashtable<DecodeHintType, Object>();
+        hint.put(DecodeHintType.TRY_HARDER, BarcodeFormat.DATA_MATRIX);
         LuminanceSource source = new BufferedImageLuminanceSource(image);
-        BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
+        BinaryBitmap bitmap = new BinaryBitmap(new GlobalHistogramBinarizer(source));
         Reader reader = new MultiFormatReader();
-        Result result = reader.decode(bitmap);
+        Result result = reader.decode(bitmap,hint);
 
         return result.getText();
     }
 
+    private BufferedImage redrawInGrayScale(BufferedImage coloredImage){
+        BufferedImage result = new BufferedImage(coloredImage.getWidth(), coloredImage.getHeight(),
+                BufferedImage.TYPE_BYTE_GRAY);
+        Graphics g = result.getGraphics();
+        g.drawImage(coloredImage, 0, 0, null);
+        g.dispose();
+        return result;
+    }
 
     public int[][] getImage(){
         BufferedImage image = lastCapturedImage.get();
