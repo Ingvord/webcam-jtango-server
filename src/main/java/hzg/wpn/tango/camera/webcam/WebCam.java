@@ -4,6 +4,7 @@ import org.tango.DeviceState;
 import org.tango.server.ServerManager;
 import org.tango.server.annotation.*;
 
+import javax.imageio.ImageIO;
 import java.io.FileInputStream;
 import java.util.Properties;
 
@@ -30,27 +31,29 @@ public class WebCam {
     }
 
     @Init
+    @StateMachine(endState = DeviceState.ON)
     public void init() throws Exception{
         Properties properties = new Properties();
         properties.load(new FileInputStream("webcam.properties"));
 
         this.engine = new Engine(properties.getProperty("capture.device"));
-
-        state = DeviceState.ON;
     }
 
     @Command
+    @StateMachine(endState = DeviceState.RUNNING)
     public void start(){
         this.engine.start();
-
-        state = DeviceState.RUNNING;
     }
 
     @Command
+    @StateMachine(endState = DeviceState.ON)
     public void stop(){
         this.engine.stop();
+    }
 
-        state = DeviceState.ON;
+    @Command
+    public String decodeBarcode() throws Exception{
+        return this.engine.decodeBarcode();
     }
 
     public int[][] getImage(){
