@@ -1,12 +1,7 @@
 package hzg.wpn.tango.camera.webcam;
 
-import com.google.zxing.*;
-import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
-import com.google.zxing.common.GlobalHistogramBinarizer;
-import com.google.zxing.common.HybridBinarizer;
-import com.google.zxing.datamatrix.DataMatrixReader;
-import org.libdmtx.DMTXImage;
-import org.libdmtx.DMTXTag;
+import jp.sourceforge.qrcode.codec.QRCodeDecoder;
+import jp.sourceforge.qrcode.codec.data.QRCodeImage;
 
 import javax.imageio.ImageIO;
 import javax.media.*;
@@ -74,29 +69,39 @@ public class Engine {
     }
 
     public String[] decodeBarcode() throws Exception{
-        BufferedImage image;
-        if((image = lastCapturedImage.get()) == null){
-            captureImage();
-            image = lastCapturedImage.get();
-        }
-        ImageIO.write(image,"jpeg",new File("output-color.jpeg"));
+//        BufferedImage image;
+//        if((image = lastCapturedImage.get()) == null){
+//            captureImage();
+//            image = lastCapturedImage.get();
+//        }
+//        ImageIO.write(image,"jpeg",new File("output-color.jpeg"));
 
-        image = redrawInGrayScale(image);
-        ImageIO.write(image,"jpeg",new File("output-gray.jpeg"));
+//        image = redrawInGrayScale(image);
+//        ImageIO.write(image,"jpeg",new File("output-gray.jpeg"));
 
-        DMTXImage lDImg = new DMTXImage(image);
+        final BufferedImage image = ImageIO.read(new File("output-gray.jpeg"));
+        System.out.println("recompiled!!!");
 
-        DMTXTag[] tags = lDImg.getTags(4, Integer.MAX_VALUE);
-        if(tags == null)
-            throw new NullPointerException("No barcodes were found!");
+        QRCodeDecoder decoder = new QRCodeDecoder();
+        String result = new String(decoder.decode(new QRCodeImage() {
+            @Override
+            public int getWidth() {
+                return image.getWidth();
+            }
 
-        String[] result = new String[tags.length];
+            @Override
+            public int getHeight() {
+                return image.getHeight();
+            }
 
-        int i = 0;
-        for(DMTXTag tag : tags){
-            result[i++] = tag.id;
-        }
-        return result;
+            @Override
+            public int getPixel(int i, int i1) {
+                return image.getRGB(i,i1);
+            }
+        }));
+
+
+        return new String[]{result};
     }
 
     private BufferedImage redrawInGrayScale(BufferedImage coloredImage){
