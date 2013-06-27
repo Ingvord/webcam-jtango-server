@@ -1,8 +1,5 @@
 package hzg.wpn.tango.camera.webcam;
 
-import jp.sourceforge.qrcode.codec.QRCodeDecoder;
-import jp.sourceforge.qrcode.codec.data.QRCodeImage;
-
 import javax.imageio.ImageIO;
 import javax.media.*;
 import javax.media.control.FrameGrabbingControl;
@@ -11,7 +8,6 @@ import javax.media.util.BufferToImage;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.Hashtable;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -82,26 +78,9 @@ public class Engine {
         final BufferedImage image = ImageIO.read(new File("output-gray.jpeg"));
         System.out.println("recompiled!!!");
 
-        QRCodeDecoder decoder = new QRCodeDecoder();
-        String result = new String(decoder.decode(new QRCodeImage() {
-            @Override
-            public int getWidth() {
-                return image.getWidth();
-            }
-
-            @Override
-            public int getHeight() {
-                return image.getHeight();
-            }
-
-            @Override
-            public int getPixel(int i, int i1) {
-                return image.getRGB(i,i1);
-            }
-        }));
 
 
-        return new String[]{result};
+        return new String[]{""};
     }
 
     private BufferedImage redrawInGrayScale(BufferedImage coloredImage){
