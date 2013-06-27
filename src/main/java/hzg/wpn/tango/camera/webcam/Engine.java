@@ -1,5 +1,7 @@
 package hzg.wpn.tango.camera.webcam;
 
+import ClearImageJNI.*;
+
 import javax.imageio.ImageIO;
 import javax.media.*;
 import javax.media.control.FrameGrabbingControl;
@@ -65,22 +67,31 @@ public class Engine {
     }
 
     public String[] decodeBarcode() throws Exception{
-//        BufferedImage image;
-//        if((image = lastCapturedImage.get()) == null){
-//            captureImage();
-//            image = lastCapturedImage.get();
-//        }
-//        ImageIO.write(image,"jpeg",new File("output-color.jpeg"));
+        BufferedImage image;
+        if((image = lastCapturedImage.get()) == null){
+            captureImage();
+            image = lastCapturedImage.get();
+        }
+        ImageIO.write(image,"bmp",new File("output-color.bmp"));
 
-//        image = redrawInGrayScale(image);
-//        ImageIO.write(image,"jpeg",new File("output-gray.jpeg"));
-
-        final BufferedImage image = ImageIO.read(new File("output-gray.jpeg"));
         System.out.println("recompiled!!!");
+        ICiServer server = new CiServer().getICiServer();
+        ICiDataMatrix data = server.CreateDataMatrix();
+        ICiImage iCiImage = server.CreateImage();
 
+        iCiImage.OpenFromFileBMP("output-color.bmp");
 
+        data.setImage(iCiImage);
 
-        return new String[]{""};
+        int length = data.Find(0);
+        String[] result = new String[length];
+
+        for(int i = 0; i < length; ++i){
+            ICiBarcode code = data.getBarcodes().getItem(i + 1);
+            result[i] = code.getText();
+        }
+
+        return result;
     }
 
     private BufferedImage redrawInGrayScale(BufferedImage coloredImage){
