@@ -74,7 +74,6 @@ public class Engine {
         }
         ImageIO.write(image,"bmp",new File("output-color.bmp"));
 
-        System.out.println("recompiled!!!");
         ICiServer server = new CiServer().getICiServer();
         ICiDataMatrix data = server.CreateDataMatrix();
         ICiImage iCiImage = server.CreateImage();
