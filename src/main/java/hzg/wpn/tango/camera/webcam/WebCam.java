@@ -52,6 +52,7 @@ public class WebCam {
     }
 
     @Command
+    @StateMachine(deniedStates = DeviceState.ON)
     public String[] decodeBarcode() throws Exception{
         return this.engine.decodeBarcode();
     }
