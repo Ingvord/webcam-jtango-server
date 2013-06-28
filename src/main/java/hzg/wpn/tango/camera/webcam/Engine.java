@@ -1,6 +1,7 @@
 package hzg.wpn.tango.camera.webcam;
 
 import ClearImageJNI.*;
+import ezjcom.JComException;
 
 import javax.imageio.ImageIO;
 import javax.media.*;
@@ -23,6 +24,9 @@ public class Engine {
     private final AtomicReference<BufferedImage> lastCapturedImage = new AtomicReference<BufferedImage>(null);
     private final FrameGrabbingControl fgc;
 
+    private final ICiServer server;
+    private final ICiDataMatrix data;
+
     public Engine(String captureDevice /*= "vfw:Microsoft WDM Image Capture (Win32):0"*/) {
         di = CaptureDeviceManager.getDevice(captureDevice);
         ml = di.getLocator();
@@ -30,6 +34,25 @@ public class Engine {
         player = createPlayer(ml);
         fgc = (FrameGrabbingControl)
                 player.getControl("javax.media.control.FrameGrabbingControl");
+
+        server = createServer();
+        data = createDataMatrix(server);
+    }
+
+    private static ICiDataMatrix createDataMatrix(ICiServer server) {
+        try {
+            return server.CreateDataMatrix();
+        } catch (JComException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static ICiServer createServer(){
+        try {
+            return new CiServer().getICiServer();
+        } catch (JComException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static Player createPlayer(MediaLocator mediaLocator) {
@@ -74,10 +97,9 @@ public class Engine {
         }
         ImageIO.write(image,"bmp",new File("output-color.bmp"));
 
-        ICiServer server = new CiServer().getICiServer();
-        ICiDataMatrix data = server.CreateDataMatrix();
         ICiImage iCiImage = server.CreateImage();
 
+        //iCiImage#LoadFromMemory does not work
         iCiImage.OpenFromFileBMP("output-color.bmp");
 
         data.setImage(iCiImage);
@@ -90,15 +112,6 @@ public class Engine {
             result[i] = code.getText();
         }
 
-        return result;
-    }
-
-    private BufferedImage redrawInGrayScale(BufferedImage coloredImage){
-        BufferedImage result = new BufferedImage(coloredImage.getWidth(), coloredImage.getHeight(),
-                BufferedImage.TYPE_BYTE_GRAY);
-        Graphics g = result.getGraphics();
-        g.drawImage(coloredImage, 0, 0, null);
-        g.dispose();
         return result;
     }
 
