@@ -90,11 +90,10 @@ public class Engine {
     }
 
     public String[] decodeBarcode() throws Exception{
-        BufferedImage image;
-        if((image = lastCapturedImage.get()) == null){
-            captureImage();
-            image = lastCapturedImage.get();
-        }
+        captureImage();
+        BufferedImage image = lastCapturedImage.get();
+
+        //we need to store image on disk because ClearImage API is not able to load image from memory
         ImageIO.write(image,"bmp",new File("output-color.bmp"));
 
         ICiImage iCiImage = server.CreateImage();
