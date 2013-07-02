@@ -94,12 +94,12 @@ public class Engine {
         BufferedImage image = lastCapturedImage.get();
 
         //we need to store image on disk because ClearImage API is not able to load image from memory
-        ImageIO.write(image,"bmp",new File("output-color.bmp"));
+        ImageIO.write(image,"jpeg",new File("output-color.jpeg"));
 
         ICiImage iCiImage = server.CreateImage();
 
         //iCiImage#LoadFromMemory does not work
-        iCiImage.OpenFromFileBMP("output-color.bmp");
+        iCiImage.OpenFromFileBMP("output-color.jpeg");
 
         data.setImage(iCiImage);
 
