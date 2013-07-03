@@ -8,9 +8,8 @@ import javax.media.*;
 import javax.media.control.FrameGrabbingControl;
 import javax.media.format.VideoFormat;
 import javax.media.util.BufferToImage;
-import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.io.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -91,15 +90,29 @@ public class Engine {
 
     public String[] decodeBarcode() throws Exception{
         captureImage();
-        BufferedImage image = lastCapturedImage.get();
+        BufferedImage img = lastCapturedImage.get();
 
-        //we need to store image on disk because ClearImage API is not able to load image from memory
-        ImageIO.write(image,"jpeg",new File("output-color.jpeg"));
+        //force RGB format
+        BufferedImage rgb = new BufferedImage(img.getWidth(),img.getHeight(),BufferedImage.TYPE_INT_RGB);
+        rgb.getGraphics().drawImage(img,0,0,null);
 
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        ImageIO.write(rgb, "bmp", baos);
+
+        //TODO if debug
+//        OutputStream os = new BufferedOutputStream(new FileOutputStream(new File("output-rgb.bmp")));
+//        os.write(baos.toByteArray());
+//        os.close();
+
+        baos.flush();
         ICiImage iCiImage = server.CreateImage();
 
-        //iCiImage#LoadFromMemory does not work
-        iCiImage.OpenFromFileBMP("output-color.jpeg");
+        iCiImage.CreateBpp(rgb.getWidth(), rgb.getHeight(),24);
+        iCiImage.LoadFromMemory(baos.toByteArray());
+
+        //TODO if debug
+        iCiImage.SaveAs("ici-output.bmp",EFileFormat.ciEXT);
 
         data.setImage(iCiImage);
 
