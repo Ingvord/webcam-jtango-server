@@ -7,7 +7,7 @@
     <groupId>hzg.wpn</groupId>
     <artifactId>WebCamServer</artifactId>
     <description>A simple tango server for web cams</description>
-    <version>1.0.1</version>
+    <version>1.0.2-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
