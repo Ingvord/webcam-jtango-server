@@ -9,6 +9,20 @@
     <description>A simple tango server for web cams</description>
     <version>1.0.2-SNAPSHOT</version>
 
+    <developers>
+        <developer>
+            <name>Igor Khokhriakov</name>
+            <id>khokhria</id>
+        </developer>
+    </developers>
+
+    <repositories>
+        <repository>
+            <id>xuggle repo</id>
+            <url>http://xuggle.googlecode.com/svn/trunk/repo/share/java/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -22,6 +36,11 @@
             <version>2.1.1e</version>
             <systemPath>${project.basedir}/lib/jmf.jar</systemPath>
             <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>xuggle</groupId>
+            <artifactId>xuggle-xuggler</artifactId>
+            <version>5.2</version>
         </dependency>
         <dependency>
             <groupId>com.inliteresearch</groupId>

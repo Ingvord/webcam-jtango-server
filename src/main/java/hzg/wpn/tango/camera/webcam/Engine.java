@@ -4,12 +4,9 @@ import ClearImageJNI.*;
 import ezjcom.JComException;
 
 import javax.imageio.ImageIO;
-import javax.media.*;
-import javax.media.control.FrameGrabbingControl;
-import javax.media.format.VideoFormat;
-import javax.media.util.BufferToImage;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -17,22 +14,15 @@ import java.util.concurrent.atomic.AtomicReference;
  * @since 07.12.12
  */
 public class Engine {
-    private final Player player;
-    private final CaptureDeviceInfo di;
-    private final MediaLocator ml;
+    private final PlayerAdapter player;
+
     private final AtomicReference<BufferedImage> lastCapturedImage = new AtomicReference<BufferedImage>(null);
-    private final FrameGrabbingControl fgc;
 
     private final ICiServer server;
     private final ICiDataMatrix data;
 
-    public Engine(String captureDevice /*= "vfw:Microsoft WDM Image Capture (Win32):0"*/) {
-        di = CaptureDeviceManager.getDevice(captureDevice);
-        ml = di.getLocator();
-
-        player = createPlayer(ml);
-        fgc = (FrameGrabbingControl)
-                player.getControl("javax.media.control.FrameGrabbingControl");
+    public Engine(/*= "vfw:Microsoft WDM Image Capture (Win32):0"*/PlayerAdapter player) {
+        this.player = player;
 
         server = createServer();
         data = createDataMatrix(server);
@@ -54,38 +44,16 @@ public class Engine {
         }
     }
 
-    private static Player createPlayer(MediaLocator mediaLocator) {
-        try{
-            return Manager.createRealizedPlayer(mediaLocator);
-        }
-        catch (Exception e){
-            e.printStackTrace();
-            throw new RuntimeException("Cannot create player!");
-        }
+    public void init(Properties webcamProperties) throws Exception{
+        player.init(webcamProperties);
     }
 
-    public void start(){
+    public void start() throws Exception{
         player.start();
     }
 
-    public void captureImage(){
-        Buffer buf = fgc.grabFrame();
-
-        // Convert it to an image
-        BufferToImage btoi = new BufferToImage((VideoFormat)buf.getFormat());
-
-        BufferedImage image = (BufferedImage) btoi.createImage(buf);
-        if(image == null){
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                return;
-            }
-            captureImage();
-        } else {
-            lastCapturedImage.set(image);
-        }
+    public void captureImage() throws Exception{
+        this.lastCapturedImage.set(player.capture());
     }
 
     public String[] decodeBarcode(BufferedImage img) throws Exception{
@@ -151,12 +119,11 @@ public class Engine {
         return result;
     }
 
-    public void stop(){
+    public void stop() throws Exception{
         player.stop();
     }
 
-    public void shutdown() {
+    public void shutdown() throws Exception{
         player.close();
-        player.deallocate();
     }
 }
