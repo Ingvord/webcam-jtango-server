@@ -36,23 +36,27 @@ public class WebCam {
         Properties properties = new Properties();
         properties.load(new FileInputStream("webcam.properties"));
 
-        this.engine = new Engine(properties.getProperty("capture.device"));
+        PlayerAdapter player = PlayerAdapters.newInstance(properties.getProperty("adapter.impl"));
+
+        this.engine = new Engine(player);
+
+        this.engine.init(properties);
     }
 
     @Delete
-    public void delete(){
+    public void delete() throws Exception{
         engine.shutdown();
     }
 
     @Command
     @StateMachine(endState = DeviceState.RUNNING)
-    public void start(){
+    public void start() throws Exception{
         this.engine.start();
     }
 
     @Command
     @StateMachine(endState = DeviceState.ON)
-    public void stop(){
+    public void stop() throws Exception{
         this.engine.stop();
     }
 
@@ -65,7 +69,7 @@ public class WebCam {
 
     @Command
     @StateMachine(deniedStates = DeviceState.ON)
-    public void capture(){
+    public void capture() throws Exception{
         engine.captureImage();
         this.image = engine.getImageAsRGBArray(engine.getLastCapturedImage());
     }
