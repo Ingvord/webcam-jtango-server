@@ -7,6 +7,8 @@ import java.util.Properties;
 /**
  * Implements adapter pattern for different WebCam video capture libraries
  *
+ * All implementations of this interface must have no-arg constructor.
+ *
  * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
  * @since 10.07.13
  */
