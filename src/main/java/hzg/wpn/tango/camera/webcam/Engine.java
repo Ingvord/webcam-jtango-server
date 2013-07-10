@@ -53,7 +53,9 @@ public class Engine {
     }
 
     public void captureImage() throws Exception{
-        this.lastCapturedImage.set(player.capture());
+        BufferedImage capture = player.capture();
+        ImageIO.write(capture,"jpeg", new File("capture.jpeg"));
+        this.lastCapturedImage.set(capture);
     }
 
     public String[] decodeBarcode(BufferedImage img) throws Exception{
