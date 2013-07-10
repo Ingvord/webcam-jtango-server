@@ -38,6 +38,13 @@
             <scope>system</scope>
         </dependency>
         <dependency>
+            <groupId>de.humatic</groupId>
+            <artifactId>htools-dsj</artifactId>
+            <version>0.8.7</version>
+            <systemPath>${project.basedir}/lib/dsj.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+        <dependency>
             <groupId>xuggle</groupId>
             <artifactId>xuggle-xuggler</artifactId>
             <version>5.2</version>
