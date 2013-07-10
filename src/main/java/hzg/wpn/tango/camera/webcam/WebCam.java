@@ -4,7 +4,7 @@ import org.tango.DeviceState;
 import org.tango.server.ServerManager;
 import org.tango.server.annotation.*;
 
-import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.util.Properties;
 
@@ -19,7 +19,7 @@ public class WebCam {
     @State
     private DeviceState state = DeviceState.OFF;
 
-    @Attribute(maxDimX = 640, maxDimY = 480)
+    @Attribute(maxDimX = 1600, maxDimY = 1200)
     private volatile int[][] image;
 
     public DeviceState getState(){
@@ -39,6 +39,11 @@ public class WebCam {
         this.engine = new Engine(properties.getProperty("capture.device"));
     }
 
+    @Delete
+    public void delete(){
+        engine.shutdown();
+    }
+
     @Command
     @StateMachine(endState = DeviceState.RUNNING)
     public void start(){
@@ -54,21 +59,23 @@ public class WebCam {
     @Command
     @StateMachine(deniedStates = DeviceState.ON)
     public String[] decodeBarcode() throws Exception{
-        return this.engine.decodeBarcode();
+        BufferedImage img = engine.RGBArrayToImage(image);
+        return this.engine.decodeBarcode(img);
+    }
+
+    @Command
+    @StateMachine(deniedStates = DeviceState.ON)
+    public void capture(){
+        engine.captureImage();
+        this.image = engine.getImageAsRGBArray(engine.getLastCapturedImage());
     }
 
     public int[][] getImage(){
-        this.engine.captureImage();
-        this.image = this.engine.getImage();
         return this.image;
     }
 
-
-
-
-    @Delete
-    public void delete(){
-        engine.shutdown();
+    public void setImage(int[][] v){
+        this.image = v;
     }
 
     public static void main(String ... args){
