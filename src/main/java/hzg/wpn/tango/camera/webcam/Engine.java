@@ -88,9 +88,9 @@ public class Engine {
         }
     }
 
-    public String[] decodeBarcode() throws Exception{
-        captureImage();
-        BufferedImage img = lastCapturedImage.get();
+    public String[] decodeBarcode(BufferedImage img) throws Exception{
+        if(img == null)
+            throw new IllegalArgumentException("img is null!");
 
         //force RGB format
         BufferedImage rgb = new BufferedImage(img.getWidth(),img.getHeight(),BufferedImage.TYPE_INT_RGB);
@@ -127,13 +127,26 @@ public class Engine {
         return result;
     }
 
-    public int[][] getImage(){
-        BufferedImage image = lastCapturedImage.get();
+    public BufferedImage getLastCapturedImage(){
+        return lastCapturedImage.get();
+    }
+
+    public int[][] getImageAsRGBArray(BufferedImage image){
         int height = image.getHeight();
         int width = image.getWidth();
         int[][] result = new int[height][width];
-        for (int y = 0; y < height; y++) {
-            image.getRGB(0,y,640,1,result[y],0,0);
+        for (int y = 0; y < height; ++y) {
+            image.getRGB(0,y,width,1,result[y],0,0);
+        }
+        return result;
+    }
+
+    public BufferedImage RGBArrayToImage(int[][] rgb) {
+        int width = rgb[0].length;
+        int height = rgb.length;
+        BufferedImage result = new BufferedImage(width, height,BufferedImage.TYPE_INT_RGB);
+        for(int y = 0; y < height;++y){
+            result.setRGB(0,y,width,1,rgb[y],0,0);
         }
         return result;
     }

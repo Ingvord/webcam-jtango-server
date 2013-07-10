@@ -23,7 +23,7 @@ public class EngineTest {
 
         engine.captureImage();
 
-        int[][] image = engine.getImage();
+        int[][] image = engine.getImageAsRGBArray(engine.getLastCapturedImage());
 
 
 
