@@ -17,11 +17,25 @@ public interface Player extends Closeable {
 
     void start() throws Exception;
 
+    /**
+     * Implementation must guarantee returning {@link BufferedImage.TYPE_INT_RGB} image
+     *
+     * @return
+     * @throws Exception
+     */
     BufferedImage capture() throws Exception;
 
     void stop() throws Exception;
 
     String[] supportedFormats();
 
+    /**
+     * This method does not guarantee that target format is really supported by the underlying hardware.
+     *
+     * May behave unexpectedly.
+     *
+     * @param id ndx of the desired format from {@link this#supportedFormats()} array
+     * @throws Exception
+     */
     void setFormat(int id) throws Exception;
 }

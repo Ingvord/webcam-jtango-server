@@ -66,10 +66,12 @@ public class DsjPlayerImpl implements Player, PropertyChangeListener {
 
     @Override
     public BufferedImage capture() throws Exception {
-
-//        graph.setPreview();
         BufferedImage bi = graph.getImage();
-        return bi;
+
+        BufferedImage result = new BufferedImage(bi.getWidth(),bi.getHeight(),BufferedImage.TYPE_INT_RGB);
+        result.getGraphics().drawImage(bi,0,0,graph);
+
+        return result;
     }
 
     @Override
@@ -98,6 +100,7 @@ public class DsjPlayerImpl implements Player, PropertyChangeListener {
 
     @Override
     public void close() throws IOException {
+        f.dispose();
         graph.dispose();
     }
 
