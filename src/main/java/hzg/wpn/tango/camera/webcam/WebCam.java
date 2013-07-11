@@ -5,7 +5,9 @@ import org.tango.DeviceState;
 import org.tango.server.ServerManager;
 import org.tango.server.annotation.*;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
@@ -39,6 +41,8 @@ public class WebCam {
     }
 
     @Attribute
+    @AttributeProperties(description = "set a new format to the hardware. Argument is an index of the desired format in the supported formats array.")
+    @StateMachine(deniedStates = DeviceState.RUNNING)
     public void setCurrentFormat(int id) throws Exception{
         player.setFormat(id);
     }
@@ -85,6 +89,8 @@ public class WebCam {
     @StateMachine(deniedStates = DeviceState.ON)
     public void capture() throws Exception{
         BufferedImage img = player.capture();
+        //TODO if debug
+        ImageIO.write(img,"jpeg",new File("capture-out.jpeg"));
         this.image = WebCamHelper.getImageAsRGBArray(img);
     }
 
