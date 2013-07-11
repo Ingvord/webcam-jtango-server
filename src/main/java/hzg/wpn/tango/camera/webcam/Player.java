@@ -12,7 +12,7 @@ import java.util.Properties;
  * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
  * @since 10.07.13
  */
-public interface PlayerAdapter extends Closeable {
+public interface Player extends Closeable {
     void init(Properties webcamProperties) throws Exception;
 
     void start() throws Exception;

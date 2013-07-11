@@ -8,6 +8,7 @@ import org.tango.server.annotation.*;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
@@ -15,7 +16,7 @@ import java.util.Properties;
  */
 @Device
 public class WebCam {
-    private Engine engine;
+    private Player player;
     private DataMatrixDecoder decoder;
 
     @State
@@ -38,45 +39,43 @@ public class WebCam {
         Properties properties = new Properties();
         properties.load(new FileInputStream("webcam.properties"));
 
-        PlayerAdapter player = PlayerAdapters.newInstance(properties.getProperty("adapter.impl"));
+        this.player = Players.newInstance(properties.getProperty("adapter.impl"));
 
-        this.engine = new Engine(player);
-
-        this.engine.init(properties);
+        this.player.init(properties);
 
         this.decoder = new DataMatrixDecoder();
     }
 
     @Delete
     public void delete() throws Exception{
-        engine.shutdown();
+        player.close();
         decoder.close();
     }
 
     @Command
     @StateMachine(endState = DeviceState.RUNNING)
     public void start() throws Exception{
-        this.engine.start();
+        this.player.start();
     }
 
     @Command
     @StateMachine(endState = DeviceState.ON)
     public void stop() throws Exception{
-        this.engine.stop();
+        this.player.stop();
     }
 
     @Command
     @StateMachine(deniedStates = DeviceState.ON)
     public String[] decodeBarcode() throws Exception{
-        BufferedImage img = engine.RGBArrayToImage(image);
+        BufferedImage img = WebCamHelper.RGBArrayToImage(image);
         return decoder.decode(img);
     }
 
     @Command
     @StateMachine(deniedStates = DeviceState.ON)
     public void capture() throws Exception{
-        engine.captureImage();
-        this.image = engine.getImageAsRGBArray(engine.getLastCapturedImage());
+        BufferedImage img = player.capture();
+        this.image = WebCamHelper.getImageAsRGBArray(img);
     }
 
     public int[][] getImage(){

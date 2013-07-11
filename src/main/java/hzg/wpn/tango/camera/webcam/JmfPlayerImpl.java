@@ -12,8 +12,8 @@ import java.util.Properties;
  * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
  * @since 10.07.13
  */
-public class JmfPlayerAdapterImpl implements PlayerAdapter {
-    private Player player;
+public class JmfPlayerImpl implements Player {
+    private javax.media.Player player;
     private CaptureDeviceInfo di;
     private MediaLocator ml;
     private FrameGrabbingControl fgc;
@@ -28,7 +28,7 @@ public class JmfPlayerAdapterImpl implements PlayerAdapter {
                 player.getControl("javax.media.control.FrameGrabbingControl");
     }
 
-    private static Player createPlayer(MediaLocator mediaLocator) {
+    private static javax.media.Player createPlayer(MediaLocator mediaLocator) {
         try{
             return Manager.createRealizedPlayer(mediaLocator);
         }
