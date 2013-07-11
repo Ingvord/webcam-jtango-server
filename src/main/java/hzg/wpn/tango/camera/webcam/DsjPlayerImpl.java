@@ -32,6 +32,7 @@ public class DsjPlayerImpl implements Player, PropertyChangeListener {
     public void init(Properties webcamProperties) throws Exception {
         DSFilterInfo[][] dsi = DSCapture.queryDevices();
 //        dsi[0][0].setPreferredFormat(35);
+        //TODO selectable capture device
         graph = new DSCapture(DSFiltergraph.DD7, dsi[0][0], false ,DSFilterInfo.doNotRender(), this);
 //        graph = new DSCapture(DSFiltergraph.JAVA_AUTODRAW & DSFiltergraph.D3D9 & DSCapture.MAX_RESIZEABLE & DSCapture.SKIP_AUDIO, null);
         f = new JFrame();
@@ -51,6 +52,7 @@ public class DsjPlayerImpl implements Player, PropertyChangeListener {
 //
         mf = usedPinInfo.getFormats();
 
+        //TODO selectable format
         vDev.setOutputFormat(activeOut, 34);
 
         f.add(graph.asComponent());
@@ -73,6 +75,25 @@ public class DsjPlayerImpl implements Player, PropertyChangeListener {
     @Override
     public void stop() throws Exception {
 
+    }
+
+    @Override
+    public String[] supportedFormats() {
+        String[] result = new String[mf.length];
+
+        int i = -1;
+        for(DSMediaType mediaType : mf){
+            result[++i] = mediaType.getDisplayString();
+        }
+        return result;
+    }
+
+    @Override
+    public void setFormat(int id) throws Exception {
+        if(id < 0 || id > mf.length)
+            throw new IllegalArgumentException("id is out of range[0,"+ mf.length +"]");
+
+        vDev.setOutputFormat(activeOut,id);
     }
 
     @Override
