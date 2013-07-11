@@ -3,10 +3,7 @@ package hzg.wpn.tango.camera.webcam;
 import de.humatic.dsj.*;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.awt.image.DataBufferInt;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.Properties;
@@ -15,7 +12,7 @@ import java.util.Properties;
  * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
  * @since 10.07.13
  */
-public class DsjPlayerAdapterImpl implements PlayerAdapter, PropertyChangeListener {
+public class DsjPlayerImpl implements Player, PropertyChangeListener {
     static {
         DSEnvironment.unlockDLL("igor.khokhriakov@hzg.de", 687816, 2091745, 0);
     }

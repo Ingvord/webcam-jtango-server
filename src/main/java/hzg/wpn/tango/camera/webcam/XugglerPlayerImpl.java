@@ -10,7 +10,7 @@ import java.util.Properties;
  * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
  * @since 10.07.13
  */
-public class XugglerPlayerAdapterImpl implements PlayerAdapter {
+public class XugglerPlayerImpl implements Player {
     public static final String DRIVER_NAME = "vfwcap";
     private IContainer container;
     private String deviceName;
