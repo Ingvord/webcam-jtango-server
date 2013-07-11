@@ -1,5 +1,6 @@
 package hzg.wpn.tango.camera.webcam;
 
+import hzg.wpn.util.decoder.DataMatrixDecoder;
 import org.tango.DeviceState;
 import org.tango.server.ServerManager;
 import org.tango.server.annotation.*;
@@ -15,6 +16,7 @@ import java.util.Properties;
 @Device
 public class WebCam {
     private Engine engine;
+    private DataMatrixDecoder decoder;
 
     @State
     private DeviceState state = DeviceState.OFF;
@@ -41,11 +43,14 @@ public class WebCam {
         this.engine = new Engine(player);
 
         this.engine.init(properties);
+
+        this.decoder = new DataMatrixDecoder();
     }
 
     @Delete
     public void delete() throws Exception{
         engine.shutdown();
+        decoder.close();
     }
 
     @Command
@@ -64,7 +69,7 @@ public class WebCam {
     @StateMachine(deniedStates = DeviceState.ON)
     public String[] decodeBarcode() throws Exception{
         BufferedImage img = engine.RGBArrayToImage(image);
-        return this.engine.decodeBarcode(img);
+        return decoder.decode(img);
     }
 
     @Command
