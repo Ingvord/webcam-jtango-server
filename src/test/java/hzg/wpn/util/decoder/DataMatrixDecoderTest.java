@@ -10,6 +10,8 @@ import static junit.framework.Assert.assertEquals;
 /**
  * This class is platform dependent and therefore is not included in regular tests.
  *
+ * Paths are relative to {PRJ_ROOT}
+ *
  * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
  * @since 11.07.13
  */
