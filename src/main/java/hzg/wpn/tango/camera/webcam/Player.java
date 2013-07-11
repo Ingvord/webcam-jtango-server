@@ -20,4 +20,8 @@ public interface Player extends Closeable {
     BufferedImage capture() throws Exception;
 
     void stop() throws Exception;
+
+    String[] supportedFormats();
+
+    void setFormat(int id) throws Exception;
 }

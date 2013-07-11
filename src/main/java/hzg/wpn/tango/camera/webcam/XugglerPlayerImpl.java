@@ -174,4 +174,14 @@ public class XugglerPlayerImpl implements Player {
             videoCoder.close();
             container.close();
     }
+
+    @Override
+    public void setFormat(int id) throws Exception {
+        throw new UnsupportedOperationException("This method is not supported in " + this.getClass());
+    }
+
+    @Override
+    public String[] supportedFormats() {
+        throw new UnsupportedOperationException("This method is not supported in " + this.getClass());
+    }
 }

@@ -71,6 +71,23 @@ public class JmfPlayerImpl implements Player {
     }
 
     @Override
+    public String[] supportedFormats() {
+        Format[] formats = di.getFormats();
+        String[] result = new String[formats.length];
+        int i = -1;
+        for(Format format : formats){
+            result[++i] = format.toString();
+        }
+
+        return result;
+    }
+
+    @Override
+    public void setFormat(int id) throws Exception {
+        throw new UnsupportedOperationException("This method is not supported in " + this.getClass());
+    }
+
+    @Override
     public void close() throws IOException {
         player.deallocate();
     }

@@ -33,6 +33,16 @@ public class WebCam {
         this.state = state;
     }
 
+    @Attribute
+    public String[] getSupportedFormats(){
+        return player.supportedFormats();
+    }
+
+    @Attribute
+    public void setCurrentFormat(int id) throws Exception{
+        player.setFormat(id);
+    }
+
     @Init
     @StateMachine(endState = DeviceState.ON)
     public void init() throws Exception{
