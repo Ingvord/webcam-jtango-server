@@ -11,7 +11,7 @@ import static junit.framework.Assert.assertEquals;
 
 /**
  * This class is platform dependent and therefore is not included in regular tests.
- *
+ * <p/>
  * Paths are relative to {PRJ_ROOT}
  *
  * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
@@ -19,16 +19,16 @@ import static junit.framework.Assert.assertEquals;
  */
 public class DataMatrixDecoderTest {
     static {
-        System.setProperty("java.library.path","lib\\native\\win32");
+        System.setProperty("java.library.path", "lib\\native\\win32");
 
         hackClassLoader();
     }
 
-    private static void hackClassLoader(){
+    private static void hackClassLoader() {
         try {
-            Field fieldSysPath = ClassLoader.class.getDeclaredField( "sys_paths" );
-            fieldSysPath.setAccessible( true );
-            fieldSysPath.set( null, null );
+            Field fieldSysPath = ClassLoader.class.getDeclaredField("sys_paths");
+            fieldSysPath.setAccessible(true);
+            fieldSysPath.set(null, null);
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
@@ -39,13 +39,14 @@ public class DataMatrixDecoderTest {
     public static void main(String... args) throws Exception {
         BufferedImage img = ImageIO.read(new File("target/test-classes/test-decode-DataMatrix.jpeg"));
 
-        DataMatrixDecoder instance = new DataMatrixDecoder();
+        DataMatrixDecoder instance = new CiDataMatrixDecoderImpl();
 
         String[] result = instance.decode(img);
 
-        assertEquals("DMc00002149",result[0]);
+        assertEquals("DMc00002149", result[0]);
     }
 
     @Test
-    public void doNothing(){}
+    public void doNothing() {
+    }
 }
