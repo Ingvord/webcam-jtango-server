@@ -17,22 +17,22 @@ public class JmfPlayerImpl implements Player {
     private CaptureDeviceInfo di;
     private MediaLocator ml;
     private FrameGrabbingControl fgc;
+    private Format[] formats;
 
     @Override
     public void init(Properties webcamProperties) throws Exception {
         di = CaptureDeviceManager.getDevice(webcamProperties.getProperty("capture.device"));
         ml = di.getLocator();
-
+        formats = di.getFormats();
         player = createPlayer(ml);
         fgc = (FrameGrabbingControl)
                 player.getControl("javax.media.control.FrameGrabbingControl");
     }
 
     private static javax.media.Player createPlayer(MediaLocator mediaLocator) {
-        try{
+        try {
             return Manager.createRealizedPlayer(mediaLocator);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Cannot create player!");
         }
@@ -49,10 +49,10 @@ public class JmfPlayerImpl implements Player {
         Buffer buf = fgc.grabFrame();
 
         // Convert it to an image
-        BufferToImage btoi = new BufferToImage((VideoFormat)buf.getFormat());
+        BufferToImage btoi = new BufferToImage((VideoFormat) buf.getFormat());
 
         BufferedImage image = (BufferedImage) btoi.createImage(buf);
-        if(image == null){
+        if (image == null) {
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
@@ -72,10 +72,9 @@ public class JmfPlayerImpl implements Player {
 
     @Override
     public String[] supportedFormats() {
-        Format[] formats = di.getFormats();
         String[] result = new String[formats.length];
         int i = -1;
-        for(Format format : formats){
+        for (Format format : formats) {
             result[++i] = format.toString();
         }
 
@@ -85,6 +84,12 @@ public class JmfPlayerImpl implements Player {
     @Override
     public void setFormat(int id) throws Exception {
         throw new UnsupportedOperationException("This method is not supported in " + this.getClass());
+    }
+
+    @Override
+    public String currentFormat() {
+        //TODO check correctness
+        return formats[formats.length - 1].toString();
     }
 
     @Override
