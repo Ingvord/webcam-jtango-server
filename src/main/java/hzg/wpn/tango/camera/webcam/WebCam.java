@@ -55,11 +55,11 @@ public class WebCam {
     }
 
     @Attribute
-    @AttributeProperties(description = "set a new format to the hardware. Argument is an index of the desired format in the supported formats array. May deadlock server if hardware does not support the desired format.")
-    @StateMachine(deniedStates = DeviceState.RUNNING)
-    public void setCurrentFormat(int id) throws Exception {
-        player.setFormat(id);
+    @AttributeProperties(description = "returns currently used format.")
+    public String getCurrentFormat() {
+        return player.currentFormat();
     }
+
 
     @Init
     @StateMachine(endState = DeviceState.ON)
@@ -105,6 +105,12 @@ public class WebCam {
             decoder.close();
     }
 
+    @Command(inTypeDesc = "Argument is an index of the desired format from the supported formats array. May deadlock server if hardware does not support the desired format - this is the case when abstract driver is used.")
+    @StateMachine(deniedStates = DeviceState.RUNNING)
+    public void changeFormat(int id) throws Exception {
+        player.setFormat(id);
+    }
+
     @Command
     @StateMachine(endState = DeviceState.RUNNING)
     public void start() throws Exception {
@@ -123,7 +129,7 @@ public class WebCam {
         BufferedImage img = player.capture();
         //TODO if debug
         ImageIO.write(img, "jpeg", new File("capture-out.jpeg"));
-        this.image = WebCamHelper.getImageAsRGBArray(img);
+        this.image = WebCamHelper.imageToRGBArray(img);
     }
 
     public int[][] getImage() {

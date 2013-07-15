@@ -36,8 +36,7 @@ public class XugglerPlayerImpl implements Player {
         deviceName = "0";
         int retval = container.open(deviceName, IContainer.Type.READ, format,
                 false, true, params, null);
-        if (retval < 0)
-        {
+        if (retval < 0) {
             // This little trick converts the non friendly integer return value into
             // a slightly more friendly object to get a human-readable error name
             IError error = IError.make(retval);
@@ -50,33 +49,30 @@ public class XugglerPlayerImpl implements Player {
         // and iterate through the streams to find the first video stream
         videoStreamId = -1;
         videoCoder = null;
-        for(int i = 0; i < numStreams; i++)
-        {
+        for (int i = 0; i < numStreams; i++) {
             // Find the stream object
             IStream stream = container.getStream(i);
             // Get the pre-configured decoder that can decode this stream;
             IStreamCoder coder = stream.getStreamCoder();
 
-            if (coder.getCodecType() == ICodec.Type.CODEC_TYPE_VIDEO)
-            {
+            if (coder.getCodecType() == ICodec.Type.CODEC_TYPE_VIDEO) {
                 videoStreamId = i;
                 videoCoder = coder;
                 break;
             }
         }
         if (videoStreamId == -1)
-            throw new Exception("could not find video stream in container: "+ deviceName);
+            throw new Exception("could not find video stream in container: " + deviceName);
 
         /*
         * Now we have found the video stream in this file.  Let's open up our decoder so it can
         * do work.
         */
         if (videoCoder.open() < 0)
-            throw new Exception("could not open video decoder for container: "+ deviceName);
+            throw new Exception("could not open video decoder for container: " + deviceName);
 
         resampler = null;
-        if (videoCoder.getPixelType() != IPixelFormat.Type.RGB24)
-        {
+        if (videoCoder.getPixelType() != IPixelFormat.Type.RGB24) {
             // if this stream is not in BGR24, we're going to need to
             // convert it.  The VideoResampler does that for us.
             resampler = IVideoResampler.make(videoCoder.getWidth(), videoCoder.getHeight(), IPixelFormat.Type.RGB24,
@@ -98,13 +94,11 @@ public class XugglerPlayerImpl implements Player {
      * Now, we start walking through the container looking at each packet.
      */
         IPacket packet = IPacket.make();
-        while(container.readNextPacket(packet) >= 0)
-        {
+        while (container.readNextPacket(packet) >= 0) {
             /*
             * Now we have a packet, let's see if it belongs to our video stream
             */
-            if (packet.getStreamIndex() == videoStreamId)
-            {
+            if (packet.getStreamIndex() == videoStreamId) {
                 /*
                 * We allocate a new picture to get the data out of Xuggler
                 */
@@ -112,8 +106,7 @@ public class XugglerPlayerImpl implements Player {
                         videoCoder.getWidth(), videoCoder.getHeight());
 
                 int offset = 0;
-                while(offset < packet.getSize())
-                {
+                while (offset < packet.getSize()) {
                     /*
                     * Now, we decode the video, checking for any errors.
                     *
@@ -128,15 +121,13 @@ public class XugglerPlayerImpl implements Player {
                     * a full video picture yet.  Therefore you should always check if you
                     * got a complete picture from the decoder
                     */
-                    if (picture.isComplete())
-                    {
+                    if (picture.isComplete()) {
                         IVideoPicture newPic = picture;
                         /*
                         * If the resampler is not null, that means we didn't get the video in BGR24 format and
                         * need to convert it into BGR24 format.
                         */
-                        if (resampler != null)
-                        {
+                        if (resampler != null) {
                             // we must resample
                             newPic = IVideoPicture.make(resampler.getOutputPixelFormat(), picture.getWidth(), picture.getHeight());
                             if (resampler.resample(newPic, picture) < 0)
@@ -152,13 +143,12 @@ public class XugglerPlayerImpl implements Player {
                         return javaImage;
                     }
                 }
-            }
-            else
-            {
+            } else {
                 /*
                 * This packet isn't part of our video stream, so we just silently drop it.
                 */
-                do {} while(false);
+                do {
+                } while (false);
             }
 
         }
@@ -171,12 +161,18 @@ public class XugglerPlayerImpl implements Player {
 
     @Override
     public void close() throws IOException {
-            videoCoder.close();
-            container.close();
+        videoCoder.close();
+        container.close();
+    }
+
+    //TODO implement
+    @Override
+    public void setFormat(int id) throws Exception {
+        throw new UnsupportedOperationException("This method is not supported in " + this.getClass());
     }
 
     @Override
-    public void setFormat(int id) throws Exception {
+    public String currentFormat() {
         throw new UnsupportedOperationException("This method is not supported in " + this.getClass());
     }
 
