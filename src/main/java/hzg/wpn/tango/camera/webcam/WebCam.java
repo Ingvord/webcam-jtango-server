@@ -1,17 +1,9 @@
 package hzg.wpn.tango.camera.webcam;
 
-import fr.esrf.Tango.DevFailed;
-import fr.esrf.Tango.DispLevel;
-import hzg.wpn.util.decoder.CiDataMatrixDecoderImpl;
-import hzg.wpn.util.decoder.DataMatrixDecoder;
 import org.tango.DeviceState;
 import org.tango.server.ServerManager;
-import org.tango.server.StateMachineBehavior;
 import org.tango.server.annotation.*;
-import org.tango.server.command.CommandConfiguration;
-import org.tango.server.command.ICommandBehavior;
 import org.tango.server.dynamic.DynamicManager;
-import org.tango.utils.DevFailedUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -26,7 +18,6 @@ import java.util.Properties;
 @Device
 public class WebCam {
     private Player player;
-    private DataMatrixDecoder decoder;
 
     @State
     private DeviceState state = DeviceState.OFF;
@@ -70,39 +61,11 @@ public class WebCam {
         this.player = Players.newInstance(properties.getProperty("adapter.impl"));
 
         this.player.init(properties);
-
-        if (Boolean.parseBoolean(properties.getProperty("datamatrix.decoder.enabled"))) {
-            //TODO decoder factory
-            this.decoder = new CiDataMatrixDecoderImpl();
-            dynamicManagement.addCommand(new ICommandBehavior() {
-                @Override
-                public CommandConfiguration getConfiguration() throws DevFailed {
-                    return new CommandConfiguration("decodeBarcode", Void.class, String[].class, "", "DevVarStringArray with decoded values if any", DispLevel.OPERATOR, false, Integer.MAX_VALUE);
-                }
-
-                @Override
-                public Object execute(Object arg) throws DevFailed {
-                    BufferedImage img = WebCamHelper.RGBArrayToImage(image);
-                    try {
-                        return decoder.decode(img);
-                    } catch (DataMatrixDecoder.DecodingException e) {
-                        throw DevFailedUtils.newDevFailed(e);
-                    }
-                }
-
-                @Override
-                public StateMachineBehavior getStateMachine() throws DevFailed {
-                    return new StateMachineBehavior();
-                }
-            });
-        }
     }
 
     @Delete
     public void delete() throws Exception {
         player.close();
-        if (decoder != null)
-            decoder.close();
     }
 
     @Command(inTypeDesc = "Argument is an index of the desired format from the supported formats array. May deadlock server if hardware does not support the desired format - this is the case when abstract driver is used.")
