@@ -1,6 +1,7 @@
 package hzg.wpn.tango.camera.webcam;
 
 import javax.media.*;
+import javax.media.control.FormatControl;
 import javax.media.control.FrameGrabbingControl;
 import javax.media.format.VideoFormat;
 import javax.media.util.BufferToImage;
@@ -17,16 +18,18 @@ public class JmfPlayerImpl implements Player {
     private CaptureDeviceInfo di;
     private MediaLocator ml;
     private FrameGrabbingControl fgc;
+    private FormatControl fc;
     private Format[] formats;
 
     @Override
     public void init(Properties webcamProperties) throws Exception {
         di = CaptureDeviceManager.getDevice(webcamProperties.getProperty("capture.device"));
         ml = di.getLocator();
-        formats = di.getFormats();
         player = createPlayer(ml);
         fgc = (FrameGrabbingControl)
                 player.getControl("javax.media.control.FrameGrabbingControl");
+        fc = (FormatControl) player.getControl("javax.media.control.FormatControl");
+        formats = fc.getSupportedFormats();
     }
 
     private static javax.media.Player createPlayer(MediaLocator mediaLocator) {
@@ -83,13 +86,14 @@ public class JmfPlayerImpl implements Player {
 
     @Override
     public void setFormat(int id) throws Exception {
-        throw new UnsupportedOperationException("This method is not supported in " + this.getClass());
+        if (id < 0 || id >= formats.length)
+            throw new IllegalArgumentException("Invalid format id! Check supportedFormats...");
+        fc.setFormat(formats[id]);
     }
 
     @Override
     public String currentFormat() {
-        //TODO check correctness
-        return formats[formats.length - 1].toString();
+        return fc.getFormat().toString();
     }
 
     @Override
