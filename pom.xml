@@ -50,20 +50,6 @@
             <version>5.2</version>
         </dependency>
         <dependency>
-            <groupId>com.inliteresearch</groupId>
-            <artifactId>ClearImageJNI</artifactId>
-            <version>0</version>
-            <systemPath>${project.basedir}/lib/ClearImageJNI.jar</systemPath>
-            <scope>system</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.ezjcom</groupId>
-            <artifactId>ezjcom</artifactId>
-            <version>1.8</version>
-            <systemPath>${project.basedir}/lib/ezjcom18.jar</systemPath>
-            <scope>system</scope>
-        </dependency>
-        <dependency>
             <groupId>org.tango</groupId>
             <artifactId>JTangoServer</artifactId>
             <version>0.0.29</version>
