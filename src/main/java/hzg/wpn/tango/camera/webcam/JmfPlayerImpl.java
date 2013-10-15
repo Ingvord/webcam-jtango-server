@@ -84,6 +84,13 @@ public class JmfPlayerImpl implements Player {
         return result;
     }
 
+    /**
+     * The format needs to be set before the javax.media.Player is started. After the player has been started, the FormatControl.setFormat() has no effect.
+     *
+     * @param id ndx of the desired format from {@link this#supportedFormats()} array
+     * @throws Exception
+     * @see <a href="http://popscan.blogspot.de/2012/02/capturing-webcam-image-with-java-media.html">code example</a>
+     */
     @Override
     public void setFormat(int id) throws Exception {
         if (id < 0 || id >= formats.length)
