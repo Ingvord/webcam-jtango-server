@@ -25,7 +25,7 @@ public class DsjPlayerImpl implements Player, PropertyChangeListener {
 
     private DSMediaType[] mf;
 
-    private int formatNdx = 34;
+    private int formatNdx = 0;
     private JFrame f;
 
     @Override

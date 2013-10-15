@@ -1,7 +1,7 @@
 <assembly schemaLocation="http://maven.apache.org/xsd/assembly-1.0.0.xsd">
     <id>distr</id>
     <formats>
-		<format>zip</format>
+        <format>zip</format>
     </formats>
     <dependencySets>
         <dependencySet>
@@ -27,9 +27,11 @@
             <outputDirectory>/bin</outputDirectory>
             <fileMode>0777</fileMode>
         </fileSet>
-        <fileSet>
-            <directory>src/main/properties</directory>
-            <outputDirectory>/bin</outputDirectory>
-        </fileSet>
     </fileSets>
+    <files>
+        <file>
+            <source>webcam.properties</source>
+            <outputDirectory>/bin</outputDirectory>
+        </file>
+    </files>
 </assembly>
