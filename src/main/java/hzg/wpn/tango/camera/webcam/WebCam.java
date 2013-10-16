@@ -46,6 +46,12 @@ import java.util.Properties;
  * <p/>
  * It implements the following use case: start server, configure format using format related attributes and command, start
  * capturing video (start command), capture frame, read image, stop capturing.
+ * <p/>
+ * The main component of this server is {@link Player}. This component encapsulates interaction with the camera. Several
+ * implementations are available: {@link JmfPlayerImpl} is based on Java Media Framework which uses vfw driver and therefore
+ * allows maximum resolution 640x480; {@link DsjPlayerImpl} uses DirectX and is unlimited in terms of maximum allowed resolution;
+ * {@link XugglerPlayerImpl} is an experimental one and currently does not work, but it probably allows to port this server
+ * to Linux. Users can choose the implementation they want setting webcam.properties accordingly.
  *
  * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
  * @since 11.12.12
