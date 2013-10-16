@@ -36,12 +36,11 @@
     <groupId>hzg.wpn.tango</groupId>
     <artifactId>WebCamServer</artifactId>
     <description>A simple tango server for web cams</description>
-    <version>1.0.4-SNAPSHOT</version>
+    <version>1.0.4</version>
 
     <developers>
         <developer>
             <name>Igor Khokhriakov</name>
-            <id>khokhria</id>
             <email>igor.khokhriakov@hzg.de</email>
         </developer>
     </developers>
