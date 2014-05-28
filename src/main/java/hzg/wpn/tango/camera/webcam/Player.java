@@ -6,7 +6,7 @@ import java.util.Properties;
 
 /**
  * Implements adapter pattern for different WebCam video capture libraries
- *
+ * <p/>
  * All implementations of this interface must have no-arg constructor.
  *
  * @author Igor Khokhriakov <igor.khokhriakov@hzg.de>
@@ -31,7 +31,7 @@ public interface Player extends Closeable {
 
     /**
      * This method does not guarantee that target format is really supported by the underlying hardware.
-     *
+     * <p/>
      * May behave unexpectedly.
      *
      * @param id ndx of the desired format from {@link this#supportedFormats()} array
