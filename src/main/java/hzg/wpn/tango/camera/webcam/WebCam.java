@@ -123,7 +123,7 @@ public class WebCam {
     public void capture() throws Exception {
         BufferedImage img = player.capture();
         //TODO if debug
-        Path tmpImg = Files.createTempFile("capture-out", ".jpeg");
+        Path tmpImg = Files.createTempFile("capture-out-", ".jpeg");
         ImageIO.write(img, "jpeg", tmpImg.toFile());
         this.image = WebCamHelper.getImageAsRGBArray(img);
     }
