@@ -29,10 +29,9 @@ public class JmfPlayerImpl implements Player {
     }
 
     private static javax.media.Player createPlayer(MediaLocator mediaLocator) {
-        try{
+        try {
             return Manager.createRealizedPlayer(mediaLocator);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Cannot create player!");
         }
@@ -49,10 +48,10 @@ public class JmfPlayerImpl implements Player {
         Buffer buf = fgc.grabFrame();
 
         // Convert it to an image
-        BufferToImage btoi = new BufferToImage((VideoFormat)buf.getFormat());
+        BufferToImage btoi = new BufferToImage((VideoFormat) buf.getFormat());
 
         BufferedImage image = (BufferedImage) btoi.createImage(buf);
-        if(image == null){
+        if (image == null) {
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
@@ -75,7 +74,7 @@ public class JmfPlayerImpl implements Player {
         Format[] formats = di.getFormats();
         String[] result = new String[formats.length];
         int i = -1;
-        for(Format format : formats){
+        for (Format format : formats) {
             result[++i] = format.toString();
         }
 

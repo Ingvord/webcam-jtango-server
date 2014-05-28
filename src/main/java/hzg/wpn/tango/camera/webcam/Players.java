@@ -5,9 +5,10 @@ package hzg.wpn.tango.camera.webcam;
  * @since 10.07.13
  */
 public class Players {
-    private Players(){}
+    private Players() {
+    }
 
-    public static Player newInstance(String impl) throws Exception{
-        return (Player)Class.forName(impl).newInstance();
+    public static Player newInstance(String impl) throws Exception {
+        return (Player) Class.forName(impl).newInstance();
     }
 }
