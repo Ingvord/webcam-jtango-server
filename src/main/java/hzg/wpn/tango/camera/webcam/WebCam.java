@@ -15,8 +15,9 @@ import org.tango.utils.DevFailedUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.FileInputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Properties;
 
 /**
@@ -122,7 +123,8 @@ public class WebCam {
     public void capture() throws Exception {
         BufferedImage img = player.capture();
         //TODO if debug
-        ImageIO.write(img, "jpeg", new File("capture-out.jpeg"));
+        Path tmpImg = Files.createTempFile("capture-out", ".jpeg");
+        ImageIO.write(img, "jpeg", tmpImg.toFile());
         this.image = WebCamHelper.getImageAsRGBArray(img);
     }
 
