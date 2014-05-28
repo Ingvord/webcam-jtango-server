@@ -35,6 +35,9 @@ public class WebCam {
     @Attribute(maxDimX = 1600, maxDimY = 1200)
     private volatile int[][] image;
 
+    @Attribute
+    private volatile String tempImage;
+
     public DeviceState getState() {
         return state;
     }
@@ -125,7 +128,12 @@ public class WebCam {
         //TODO if debug
         Path tmpImg = Files.createTempFile("capture-out-", ".jpeg");
         ImageIO.write(img, "jpeg", tmpImg.toFile());
+        this.tempImage = tmpImg.toAbsolutePath().toString();
         this.image = WebCamHelper.getImageAsRGBArray(img);
+    }
+
+    public String getTempImage() {
+        return tempImage;
     }
 
     public int[][] getImage() {
