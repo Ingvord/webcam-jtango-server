@@ -36,7 +36,7 @@ public class WebCam {
     private volatile int[][] image;
 
     @Attribute
-    private volatile String tempImage;
+    private volatile String pathToCapturedImage;
 
     public DeviceState getState() {
         return state;
@@ -128,12 +128,12 @@ public class WebCam {
         //TODO if debug
         Path tmpImg = Files.createTempFile("capture-out-", ".jpeg");
         ImageIO.write(img, "jpeg", tmpImg.toFile());
-        this.tempImage = tmpImg.toAbsolutePath().toString();
+        this.pathToCapturedImage = tmpImg.toAbsolutePath().toString();
         this.image = WebCamHelper.getImageAsRGBArray(img);
     }
 
-    public String getTempImage() {
-        return tempImage;
+    public String getPathToCapturedImage() {
+        return pathToCapturedImage;
     }
 
     public int[][] getImage() {
