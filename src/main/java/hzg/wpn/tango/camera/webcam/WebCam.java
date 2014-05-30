@@ -33,11 +33,16 @@ import org.tango.DeviceState;
 import org.tango.server.ServerManager;
 import org.tango.server.annotation.*;
 import org.tango.server.dynamic.DynamicManager;
+import sun.nio.ch.DirectBuffer;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Properties;
 
 /**
@@ -58,13 +63,18 @@ import java.util.Properties;
  */
 @Device
 public class WebCam {
-    private Player player;
+    private Player player;    
 
     @State
     private DeviceState state = DeviceState.OFF;
 
     @Attribute(maxDimX = 1600, maxDimY = 1200)
     private volatile int[][] image;
+
+    @Attribute
+    private volatile String pathToCapturedImage;
+
+    private volatile long imageAddress;
 
     public DeviceState getState() {
         return state;
@@ -87,11 +97,11 @@ public class WebCam {
     }
 
     @Attribute
-    @AttributeProperties(description = "returns currently used format.")
-    public String getCurrentFormat() {
-        return player.currentFormat();
+    @AttributeProperties(description = "set a new format to the hardware. Argument is an index of the desired format in the supported formats array. May deadlock server if hardware does not support the desired format.")
+    @StateMachine(deniedStates = DeviceState.RUNNING)
+    public void setCurrentFormat(int id) throws Exception {
+        player.setFormat(id);
     }
-
 
     @Init
     @StateMachine(endState = DeviceState.ON)
@@ -101,18 +111,12 @@ public class WebCam {
 
         this.player = Players.newInstance(properties.getProperty("adapter.impl"));
 
-        this.player.init(properties);
+        this.player.init(properties);        
     }
 
     @Delete
     public void delete() throws Exception {
-        player.close();
-    }
-
-    @Command(inTypeDesc = "Argument is an index of the desired format from the supported formats array. May deadlock server if hardware does not support the desired format - this is the case when abstract driver is used.")
-    @StateMachine(deniedStates = DeviceState.RUNNING)
-    public void changeFormat(int id) throws Exception {
-        player.setFormat(id);
+        player.close();        
     }
 
     @Command
@@ -130,18 +134,30 @@ public class WebCam {
     @Command
     @StateMachine(deniedStates = DeviceState.ON)
     public void capture() throws Exception {
-        BufferedImage img = player.capture();
+        BufferedImage bufferedImage = player.capture();
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage, "jpeg", bos);
+        ByteBuffer buffer = ByteBuffer.allocateDirect(bos.size());
+        buffer.put(bos.toByteArray());
+        imageAddress = ((DirectBuffer) buffer).address();
         //TODO if debug
-        ImageIO.write(img, "jpeg", new File("capture-out.jpeg"));
-        this.image = WebCamHelper.imageToRGBArray(img);
+        Path tmpImg = Files.createTempFile("capture-out-", ".jpeg");
+        ImageIO.write(bufferedImage, "jpeg", tmpImg.toFile());
+        this.pathToCapturedImage = tmpImg.toAbsolutePath().toString();
+        this.image = WebCamHelper.imageToRGBArray(bufferedImage);
+    }
+
+    public String getPathToCapturedImage() {
+        return pathToCapturedImage;
     }
 
     public int[][] getImage() {
         return this.image;
     }
 
-    public void setImage(int[][] v) {
-        this.image = v;
+    @Attribute
+    public long getImageAdress() throws IOException {
+        return imageAddress;
     }
 
     public static void main(String... args) {
