@@ -42,7 +42,7 @@ public class WebCam {
     @Attribute
     private volatile String pathToCapturedImage;
 
-    private volatile BufferedImage bufferedImage;
+    private volatile long imageAddress;
 
     public DeviceState getState() {
         return state;
@@ -130,7 +130,12 @@ public class WebCam {
     @Command
     @StateMachine(deniedStates = DeviceState.ON)
     public void capture() throws Exception {
-        bufferedImage = player.capture();
+        BufferedImage bufferedImage = player.capture();
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage, "jpeg", bos);
+        ByteBuffer buffer = ByteBuffer.allocateDirect(bos.size());
+        buffer.put(bos.toByteArray());
+        imageAddress = ((DirectBuffer) buffer).address();
         //TODO if debug
         Path tmpImg = Files.createTempFile("capture-out-", ".jpeg");
         ImageIO.write(bufferedImage, "jpeg", tmpImg.toFile());
@@ -152,11 +157,7 @@ public class WebCam {
 
     @Attribute
     public long getImageAdress() throws IOException {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ImageIO.write(bufferedImage, "jpeg", bos);
-        ByteBuffer buffer = ByteBuffer.allocateDirect(bos.size());
-        buffer.put(bos.toByteArray());
-        return ((DirectBuffer) buffer).address();
+        return imageAddress;
     }
 
     public static void main(String... args) {
