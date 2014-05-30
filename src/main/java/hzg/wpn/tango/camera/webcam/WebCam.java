@@ -12,10 +12,14 @@ import org.tango.server.command.CommandConfiguration;
 import org.tango.server.command.ICommandBehavior;
 import org.tango.server.dynamic.DynamicManager;
 import org.tango.utils.DevFailedUtils;
+import sun.nio.ch.DirectBuffer;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
@@ -37,6 +41,8 @@ public class WebCam {
 
     @Attribute
     private volatile String pathToCapturedImage;
+
+    private volatile BufferedImage bufferedImage;
 
     public DeviceState getState() {
         return state;
@@ -124,12 +130,12 @@ public class WebCam {
     @Command
     @StateMachine(deniedStates = DeviceState.ON)
     public void capture() throws Exception {
-        BufferedImage img = player.capture();
+        bufferedImage = player.capture();
         //TODO if debug
         Path tmpImg = Files.createTempFile("capture-out-", ".jpeg");
-        ImageIO.write(img, "jpeg", tmpImg.toFile());
+        ImageIO.write(bufferedImage, "jpeg", tmpImg.toFile());
         this.pathToCapturedImage = tmpImg.toAbsolutePath().toString();
-        this.image = WebCamHelper.getImageAsRGBArray(img);
+        this.image = WebCamHelper.getImageAsRGBArray(bufferedImage);
     }
 
     public String getPathToCapturedImage() {
@@ -142,6 +148,15 @@ public class WebCam {
 
     public void setImage(int[][] v) {
         this.image = v;
+    }
+
+    @Attribute
+    public long getImageAdress() throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage, "jpeg", bos);
+        ByteBuffer buffer = ByteBuffer.allocateDirect(bos.size());
+        buffer.put(bos.toByteArray());
+        return ((DirectBuffer) buffer).address();
     }
 
     public static void main(String... args) {
