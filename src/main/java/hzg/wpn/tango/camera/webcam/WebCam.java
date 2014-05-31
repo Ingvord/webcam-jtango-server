@@ -33,6 +33,7 @@ import org.tango.DeviceState;
 import org.tango.server.ServerManager;
 import org.tango.server.annotation.*;
 import org.tango.server.dynamic.DynamicManager;
+import sun.misc.Unsafe;
 import sun.nio.ch.DirectBuffer;
 
 import javax.imageio.ImageIO;
@@ -40,6 +41,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -63,6 +65,22 @@ import java.util.Properties;
  */
 @Device
 public class WebCam {
+    private static final Unsafe unsafe;
+
+    static {
+        try {
+            unsafe = instantiateUnsafe();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static Unsafe instantiateUnsafe() throws Exception {
+        Field f = Unsafe.class.getDeclaredField("theUnsafe");
+        f.setAccessible(true);
+        return  (Unsafe) f.get(null);
+    }
+
     private Player player;    
 
     @State
@@ -75,6 +93,7 @@ public class WebCam {
     private volatile String pathToCapturedImage;
 
     private volatile long imageAddress;
+    private volatile long imageSize;
 
     public DeviceState getState() {
         return state;
@@ -134,16 +153,29 @@ public class WebCam {
     @Command
     @StateMachine(deniedStates = DeviceState.ON)
     public void capture() throws Exception {
+        //capture new image
         BufferedImage bufferedImage = player.capture();
+
+        //clear previous image buffer
+        if(imageAddress != 0L)
+            unsafe.freeMemory(imageAddress);
+
+        //store new image in a direct buffer
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ImageIO.write(bufferedImage, "jpeg", bos);
         ByteBuffer buffer = ByteBuffer.allocateDirect(bos.size());
-        buffer.put(bos.toByteArray());
+        byte[] bytes = bos.toByteArray();
+        buffer.put(bytes);
         imageAddress = ((DirectBuffer) buffer).address();
+        imageSize = bytes.length;
+
+        //store tmp image
         //TODO if debug
         Path tmpImg = Files.createTempFile("capture-out-", ".jpeg");
         ImageIO.write(bufferedImage, "jpeg", tmpImg.toFile());
         this.pathToCapturedImage = tmpImg.toAbsolutePath().toString();
+
+        //final store the new image as 2x array
         this.image = WebCamHelper.imageToRGBArray(bufferedImage);
     }
 
@@ -156,8 +188,8 @@ public class WebCam {
     }
 
     @Attribute
-    public long getImageAdress() throws IOException {
-        return imageAddress;
+    public long[] getImageAdressAndSize() throws IOException {
+        return new long[]{imageAddress,imageSize};
     }
 
     public static void main(String... args) {
