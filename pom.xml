@@ -81,21 +81,19 @@
         <dependency>
             <groupId>org.tango</groupId>
             <artifactId>JTangoServer</artifactId>
-            <version>0.0.29</version>
-            <systemPath>${project.basedir}/lib/JTangoServer-0.0.29-all.jar</systemPath>
-            <scope>system</scope>
+            <version>1.1.4</version>
         </dependency>
     </dependencies>
 
     <build>
-        <finalName>WebCamServer-${version}</finalName>
+        <finalName>WebCamServer-${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
