@@ -66,11 +66,11 @@ import java.util.Properties;
  */
 @Device
 public class WebCam {
-    private static final Unsafe unsafe;
+    private static final Unsafe UNSAFE;
 
     static {
         try {
-            unsafe = instantiateUnsafe();
+            UNSAFE = instantiateUnsafe();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -149,6 +149,8 @@ public class WebCam {
     @StateMachine(endState = DeviceState.ON)
     public void stop() throws Exception {
         this.player.stop();
+        if(imageAddress != 0L)
+            UNSAFE.freeMemory(imageAddress);
     }
 
     @Command
@@ -159,7 +161,7 @@ public class WebCam {
 
         //clear previous image buffer
         if(imageAddress != 0L)
-            unsafe.freeMemory(imageAddress);
+            UNSAFE.freeMemory(imageAddress);
 
         //store new image in a direct buffer
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
