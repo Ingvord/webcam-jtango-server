@@ -29,6 +29,7 @@
 
 package hzg.wpn.tango.camera.webcam;
 
+import hzg.wpn.util.BufferedImageHelper;
 import org.tango.DeviceState;
 import org.tango.server.ServerManager;
 import org.tango.server.annotation.*;
@@ -176,7 +177,7 @@ public class WebCam {
         this.pathToCapturedImage = tmpImg.toAbsolutePath().toString();
 
         //final store the new image as 2x array
-        this.image = WebCamHelper.imageToRGBArray(bufferedImage);
+        this.image = BufferedImageHelper.imageToRGBArray(bufferedImage);
     }
 
     public String getPathToCapturedImage() {
