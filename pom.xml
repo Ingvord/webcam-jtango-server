@@ -28,8 +28,8 @@
   ~ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -49,6 +49,15 @@
         <repository>
             <id>xuggle repo</id>
             <url>http://xuggle.googlecode.com/svn/trunk/repo/share/java/</url>
+        </repository>
+        <repository>
+            <id>oss-snapshots-repo</id>
+            <name>Sonatype OSS Maven Repository</name>
+            <url>https://oss.sonatype.org/content/groups/public</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
         </repository>
     </repositories>
 
@@ -79,9 +88,14 @@
             <version>5.2</version>
         </dependency>
         <dependency>
+            <groupId>com.pi4j</groupId>
+            <artifactId>pi4j-core</artifactId>
+            <version>1.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>org.tango</groupId>
             <artifactId>JTangoServer</artifactId>
-            <version>1.1.4</version>
+            <version>9.0.0</version>
         </dependency>
     </dependencies>
 
@@ -190,5 +204,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
