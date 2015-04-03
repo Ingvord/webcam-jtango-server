@@ -76,25 +76,27 @@ public class WebCam {
         }
     }
 
+    private Player player;
+    @State
+    private DeviceState state = DeviceState.OFF;
+    @Attribute(maxDimX = 1600, maxDimY = 1200)
+    private volatile int[][] image;
+    @Attribute
+    private volatile String pathToCapturedImage;
+    private volatile long imageAddress;
+    private volatile long imageSize;
+    @DynamicManagement
+    private DynamicManager dynamicManagement;
+
     private static Unsafe instantiateUnsafe() throws Exception {
         Field f = Unsafe.class.getDeclaredField("theUnsafe");
         f.setAccessible(true);
-        return  (Unsafe) f.get(null);
+        return (Unsafe) f.get(null);
     }
 
-    private Player player;    
-
-    @State
-    private DeviceState state = DeviceState.OFF;
-
-    @Attribute(maxDimX = 1600, maxDimY = 1200)
-    private volatile int[][] image;
-
-    @Attribute
-    private volatile String pathToCapturedImage;
-
-    private volatile long imageAddress;
-    private volatile long imageSize;
+    public static void main(String... args) {
+        ServerManager.getInstance().start(args, WebCam.class);
+    }
 
     public DeviceState getState() {
         return state;
@@ -108,9 +110,6 @@ public class WebCam {
     public String[] getSupportedFormats() {
         return player.supportedFormats();
     }
-
-    @DynamicManagement
-    private DynamicManager dynamicManagement;
 
     public void setDynamicManagement(DynamicManager dynamicManagement) {
         this.dynamicManagement = dynamicManagement;
@@ -131,12 +130,12 @@ public class WebCam {
 
         this.player = Players.newInstance(properties.getProperty("adapter.impl"));
 
-        this.player.init(properties);        
+        this.player.init(properties);
     }
 
     @Delete
     public void delete() throws Exception {
-        player.close();        
+        player.close();
     }
 
     @Command
@@ -193,9 +192,5 @@ public class WebCam {
     @Attribute
     public long[] getImageAdressAndSize() throws IOException {
         return new long[]{imageAddress,imageSize};
-    }
-
-    public static void main(String... args) {
-        ServerManager.getInstance().start(args, WebCam.class);
     }
 }
