@@ -5,6 +5,6 @@ echo "Using TANGO_HOST=$TANGO_HOST"
 INSTANCE_NAME="development"
 echo "Using INSTANCE_NAME=$INSTANCE_NAME"
 
-JAVA_OPTS="-server -Xmx1G"
+JAVA_OPTS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -server -Xmx1G"
 
 "$JAVA_HOME/bin/java" $JAVA_OPTS -DTANGO_HOST=$TANGO_HOST -Dfile.encoding=UTF-8 -cp "../lib/*" hzg.wpn.tango.camera.webcam.WebCam $INSTANCE_NAME -v4
