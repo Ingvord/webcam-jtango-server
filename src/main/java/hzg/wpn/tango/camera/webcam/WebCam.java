@@ -35,17 +35,11 @@ import org.tango.server.ServerManager;
 import org.tango.server.annotation.*;
 import org.tango.server.dynamic.DynamicManager;
 import sun.misc.Unsafe;
-import sun.nio.ch.DirectBuffer;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.nio.ByteBuffer;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Properties;
 
 /**
@@ -157,25 +151,6 @@ public class WebCam {
     public void capture() throws Exception {
         //capture new image
         BufferedImage bufferedImage = player.capture();
-
-        //clear previous image buffer
-        if(imageAddress != 0L)
-            UNSAFE.freeMemory(imageAddress);
-
-        //store new image in a direct buffer
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ImageIO.write(bufferedImage, "jpeg", bos);
-        ByteBuffer buffer = ByteBuffer.allocateDirect(bos.size());
-        byte[] bytes = bos.toByteArray();
-        buffer.put(bytes);
-        imageAddress = ((DirectBuffer) buffer).address();
-        imageSize = bytes.length;
-
-        //store tmp image
-        //TODO if debug
-        Path tmpImg = Files.createTempFile("capture-out-", ".jpeg");
-        ImageIO.write(bufferedImage, "jpeg", tmpImg.toFile());
-        this.pathToCapturedImage = tmpImg.toAbsolutePath().toString();
 
         //final store the new image as 2x array
         this.image = BufferedImageHelper.imageToRGBArray(bufferedImage);
