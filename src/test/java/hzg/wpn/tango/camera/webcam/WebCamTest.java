@@ -15,7 +15,7 @@ public class WebCamTest {
 
         instance.capture();
 
-        long[] result = instance.getImageAdressAndSize();
+        long[] result = instance.getImageAddressAndSize();
 
         instance.stop();
     }
