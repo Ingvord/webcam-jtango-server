@@ -7,8 +7,8 @@ import org.junit.Test;
  * @since 31.05.14
  */
 public class WebCamTest {
-    @Test
-    public void testGetImageAdressAndSize() throws Exception {
+    //@Test
+    public void testGetImageAddressAndSize() throws Exception {
         WebCam instance = new WebCam();
         instance.init();
         instance.start();
