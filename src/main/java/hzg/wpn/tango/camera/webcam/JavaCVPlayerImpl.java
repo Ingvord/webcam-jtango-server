@@ -1,6 +1,7 @@
 package hzg.wpn.tango.camera.webcam;
 
 import org.bytedeco.javacpp.opencv_core;
+import org.bytedeco.javacpp.videoInputLib;
 import org.bytedeco.javacv.OpenCVFrameGrabber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,8 +52,8 @@ public class JavaCVPlayerImpl implements Player, Runnable {
 
     public void run() {
         try {
-            grabber.setImageWidth(frameWidth);
-            grabber.setImageHeight(frameHeight);
+//            grabber.setImageWidth(frameWidth);
+//            grabber.setImageHeight(frameHeight);
             grabber.start();
             while (running) {
                 opencv_core.IplImage cvimg = grabber.grab();
