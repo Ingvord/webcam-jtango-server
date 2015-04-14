@@ -36,7 +36,7 @@
     <groupId>hzg.wpn.tango</groupId>
     <artifactId>WebCamServer</artifactId>
     <description>A simple tango server for web cams</description>
-    <version>1.0.7-SNAPSHOT</version>
+    <version>1.0.7</version>
 
     <developers>
         <developer>
