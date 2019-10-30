@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>hzg.wpn.tango</groupId>
+    <groupId>com.ik-company</groupId>
     <artifactId>WebCamServer</artifactId>
     <description>A simple tango server for web cams</description>
     <version>1.0.8-SNAPSHOT</version>
@@ -12,7 +12,7 @@
     <developers>
         <developer>
             <name>Igor Khokhriakov</name>
-            <email>igor.khokhriakov@hzg.de</email>
+            <email>igor@ik-company.com</email>
         </developer>
     </developers>
 
